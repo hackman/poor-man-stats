@@ -19,8 +19,8 @@ BEGIN {
 	# port 83	 in hex is 0053		Varnishd
 	# port 443   in hex is 01BB		HTTPS
 	# port 6379  in hex is 18EB		Redis
-	# port 3306  in hex is 0CEA		181.224.128.56:3306 == 3880E0B5:0CEA
-	# port 3307  in hex is 0CEB		181.224.128.58:3307 == 3A80E0B5:0CEB
+	# port 3306  in hex is 0CEA		MySQL on 3306
+	# port 3307  in hex is 0CEB		MySQL on 3307
 	# port 24007 in hex is 5DC7		GlusterFS
 	# port 11211 in hex is 2BCB		Memcached
 	# port 55000 in hex is D6D8		OpenSRS API
@@ -32,8 +32,8 @@ BEGIN {
 	if ( $3 ~ /:2BCB$/ ) memcached++;
 	if ( $3 ~ /:D6D8$/ ) { opensrs++; outgoing++; }
 	if ( $3 ~ /:18EB$/ ) { redis++; outgoing++; }
-	if ( $3 ~ /3880E0B5:0CEA/ ) { mysql3306++; outgoing++; }
-	if ( $3 ~ /3A80E0B5:0CEB/ ) { mysql3307++; outgoing++; }
+	if ( $3 ~ /:0CEA/ ) { mysql3306++; outgoing++; }
+	if ( $3 ~ /:0CEB/ ) { mysql3307++; outgoing++; }
 	
 }
 END {
