@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title> server stats </title>
+<meta charset="UTF-8"> 
+<script type="text/javascript" src="scripts/jquery.min.js"></script>
+<script type="text/javascript" src='server-stats.js'></script>
+<script type="text/javascript" src="scripts/jquery.canvasjs.min.js"></script>
+<script type="text/javascript">
+window.onload = function () {
+        var load = new CanvasJS.Chart("loadChart", {
+                theme: "theme3",
+                zoomEnabled: true,
+                title:{ text: "AVG Load" },
+                animationEnabled: true,
+                connectSeparatedPoints: true,
+                axisX:{labelAngle: -30,valueFormatString: "HH:mm D.MMM" },
+                axisY:{title:"Load",interval: 5,gridThickness: 1,gridColor: "#BBBBBB"},
+                data: [{
+                        type: "line",
+                        name: "LoadAVG",
+                        showInLegend: true,
+                        xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.load,
+                }],
+        });
+        var procs = new CanvasJS.Chart("procsChart", {
+                theme: "theme3",
+                zoomEnabled: true,
+                title:{ text: "Running Processes" },
+                animationEnabled: true,
+                connectSeparatedPoints: true,
+                axisX:{labelAngle: -30,valueFormatString: "HH:mm D.MMM"},
+                axisY:{title:"Num",interval: 100, gridThickness: 1,gridColor: "#BBBBBB"},
+                data: [{
+                    type: "stackedArea",
+                    name: "nginx",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.nginx,
+                },{
+                    type: "stackedArea",
+                    name: "apache",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.http,
+                },{
+                    type: "stackedArea",
+                    name: "hive",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.hive,
+                },{
+                    type: "stackedArea",
+                    name: "php",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.php,
+                }],
+        });
+        var tcpconns = new CanvasJS.Chart("tcpChart", {
+                theme: "theme3",
+                zoomEnabled: true,
+                title:{ text: "TCP Connections" },
+                animationEnabled: true,
+                connectSeparatedPoints: true,
+                axisX:{labelAngle: -30,valueFormatString: "HH:mm D.MMM"},
+                axisY:{title:"Num",interval: 500, gridThickness: 1,gridColor: "#BBBBBB"},
+                data: [{
+                    type: "line",
+                    name: "All",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.tcp,
+                },{
+                    type: "stackedArea",
+                    name: "to our services",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.in,
+                },{
+                    type: "stackedArea",
+                    name: "from our servicess",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.out,
+                }],
+        });
+        var servicesin = new CanvasJS.Chart("servicesinChart", {
+                theme: "theme3",
+                zoomEnabled: true,
+                title:{ text: "TCP service connections" },
+                animationEnabled: true,
+                connectSeparatedPoints: true,
+                axisX:{labelAngle: -30,valueFormatString: "HH:mm D.MMM"},
+                axisY:{title:"Num",interval: 500, gridThickness: 1,gridColor: "#BBBBBB"},
+                data: [{
+                    type: "stackedArea",
+                    name: "http in",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.httpin,
+                },{
+                    type: "stackedArea",
+                    name: "https in",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.httpsin,
+                }],
+        });
+        var servicesout = new CanvasJS.Chart("servicesoutChart", {
+                theme: "theme3",
+                zoomEnabled: true,
+                title:{ text: "TCP service connections" },
+                animationEnabled: true,
+                connectSeparatedPoints: true,
+                axisX:{labelAngle: -30,valueFormatString: "HH:mm D.MMM"},
+                axisY:{title:"Num",interval: 500, gridThickness: 1,gridColor: "#BBBBBB"},
+                data: [{
+                    type: "stackedArea",
+                    name: "http out",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.httpout,
+                },{
+                    type: "stackedArea",
+                    name: "https out",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.httpsout,
+                },{
+                    type: "stackedArea",
+                    name: "varnish",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.varnish,
+                },{
+                    type: "stackedArea",
+                    name: "redis",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.redis,
+                },{
+                    type: "stackedArea",
+                    name: "mysql3306",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.mysql3306,
+                },{
+                    type: "stackedArea",
+                    name: "mysql3307",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.mysql3307,
+                },{
+                    type: "stackedArea",
+                    name: "opensrs",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.opensrs,
+                },{
+                    type: "stackedArea",
+                    name: "memcached",
+                    showInLegend: true,
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.memcached,
+                }],
+        });
+        var udpconns = new CanvasJS.Chart("udpChart", {
+                theme: "theme3",
+                zoomEnabled: true,
+                title:{ text: "UDP Connections" },
+                animationEnabled: true,
+                connectSeparatedPoints: true,
+                axisX:{labelAngle: -30,valueFormatString: "HH:mm D.MMM"},
+                axisY:{title:"Num",interval: 200, gridThickness: 1,gridColor: "#BBBBBB"},
+                data: [{
+                    type: "line",
+                    name: "All",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.udp,
+                },{
+                    type: "stackedArea",
+                    name: "DNS to us",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.dnstous,
+                },{
+                    type: "stackedArea",
+                    name: "DNS from us",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.dnsfromus,
+                },{
+                    type: "stackedArea",
+                    name: "DNS to google",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.dnstogoogle,
+                },{
+                    type: "stackedArea",
+                    name: "other udp",
+                    showInLegend: true,
+                    markerType: "none",
+                    xValueType: "dateTime",
+					toolTipContent: "{name} <hr/> Date: {x}<br/>Value: {y}",
+                	dataPoints: points.udpother,
+                }],
+        });
+        load.render();
+        procs.render();
+		tcpconns.render();
+		servicesin.render();
+		servicesout.render();
+		udpconns.render();
+}
+</script>
+<body>
+  <div id="loadChart" style="height: 300px; width: 100%;"></div>
+  <br />
+  <div id="procsChart" style="height: 300px; width: 100%;"></div>
+  <br />
+  <div id="tcpChart" style="height: 300px; width: 100%;"></div>
+  <br />
+  <div id="servicesinChart" style="height: 300px; width: 100%;"></div>
+  <br />
+  <div id="servicesoutChart" style="height: 300px; width: 100%;"></div>
+  <br />
+  <div id="udpChart" style="height: 300px; width: 100%;"></div>
+</body>
+</html>
+
